@@ -20,9 +20,10 @@ app.post("/publish", upload.single("video"), async (req, res) => {
     console.error(err);
     res.status(500).json({ status: "error", message: err.message });
   }
+}); // <— QUESTA parentesi mancava
+
 app.get("/", (req, res) => {
   res.send("Microservizio TikTok attivo");
 });
-
 
 app.listen(3000, () => console.log("TikTok microservice running on port 3000"));
