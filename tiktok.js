@@ -29,15 +29,26 @@ export async function publishToTikTok(videoPath, description) {
   // Vai alla pagina upload
   await page.goto("https://www.tiktok.com/upload?lang=en", {
     waitUntil: "networkidle",
-    timeout: 120000
+    timeout: 180000
   });
 
-  // Upload del video
-  const input = await page.waitForSelector("input[type='file']");
+  // Attendi che la pagina abbia finito di caricare script e XHR
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(5000);
+
+  // Aspetta che l'input file esista nel DOM (anche se nascosto)
+  await page.waitForFunction(() => {
+    return document.querySelector("input[type='file']") !== null;
+  }, { timeout: 180000 });
+
+  // Prendi l'input file
+  const input = await page.$("input[type='file']");
+
+  // Carica il video
   await input.setInputFiles(videoPath);
 
-  // Attendi caricamento
-  await page.waitForSelector("[data-e2e='caption']", { timeout: 120000 });
+  // Attendi che appaia la caption
+  await page.waitForSelector("[data-e2e='caption']", { timeout: 180000 });
 
   // Inserisci descrizione
   await page.fill("[data-e2e='caption']", description);
@@ -47,7 +58,7 @@ export async function publishToTikTok(videoPath, description) {
 
   // Attendi conferma
   await page.waitForSelector("[data-e2e='post-success']", {
-    timeout: 120000
+    timeout: 180000
   });
 
   await browser.close();
