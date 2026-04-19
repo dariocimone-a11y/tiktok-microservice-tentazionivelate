@@ -1,6 +1,5 @@
 import express from "express";
 import multer from "multer";
-import fs from "fs";
 import { publishToTikTok } from "./tiktok.js";
 
 const app = express();
@@ -8,22 +7,18 @@ const upload = multer({ dest: "uploads/" });
 
 app.post("/publish", upload.single("video"), async (req, res) => {
   try {
-    const description = req.body.description || "";
     const videoPath = req.file.path;
+    const description = req.body.description;
 
     const result = await publishToTikTok(videoPath, description);
 
-    fs.unlinkSync(videoPath);
-
-    res.json({ status: "ok", result });
+    res.json({ status: "ok", message: result });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ status: "error", message: err.message });
+    res.json({ status: "error", message: err.message });
   }
-}); // <— QUESTA parentesi mancava
-
-app.get("/", (req, res) => {
-  res.send("Microservizio TikTok attivo");
 });
 
-app.listen(3000, () => console.log("TikTok microservice running on port 3000"));
+app.listen(3000, () => {
+  console.log("Microservizio TikTok in esecuzione sulla porta 3000");
+});
