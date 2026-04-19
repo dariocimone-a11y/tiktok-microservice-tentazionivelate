@@ -1,11 +1,10 @@
-import { chromium } from "playwright";
+import { webkit } from "playwright";
 import fs from "fs";
 
 export async function publishToTikTok(videoPath, description) {
-  const browser = await chromium.launch({
+  const browser = await webkit.launch({
     headless: true,
     args: [
-      "--disable-blink-features=AutomationControlled",
       "--no-sandbox",
       "--disable-setuid-sandbox",
       "--disable-dev-shm-usage"
@@ -14,7 +13,6 @@ export async function publishToTikTok(videoPath, description) {
 
   const context = await browser.newContext({
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-    bypassCSP: true,
     viewport: { width: 1280, height: 800 }
   });
 
