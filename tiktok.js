@@ -3,7 +3,7 @@ import fs from "fs";
 
 export async function publishToTikTok(videoPath, description) {
   const browser = await chromium.launch({
-    headless: true,
+    headless: false,
   });
 
   const context = await browser.newContext();
@@ -18,7 +18,7 @@ export async function publishToTikTok(videoPath, description) {
   await page.waitForTimeout(5000);
 
   // Carica la pagina upload (TikTok è lento → 90 secondi)
-  await page.goto("https://www.tiktok.com/upload?lang=en", {
+  await page.goto("https://www.tiktok.com/creator-center/upload?lang=en", {
     waitUntil: "networkidle",
     timeout: 90000
   });
