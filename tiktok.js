@@ -3,12 +3,19 @@ import fs from "fs";
 
 export async function publishToTikTok(videoPath, description) {
   const browser = await chromium.launch({
-    headless: false, // TikTok blocca headless
+    headless: true,
+    args: [
+      "--disable-blink-features=AutomationControlled",
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage"
+    ]
   });
 
   const context = await browser.newContext({
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-    bypassCSP: true
+    bypassCSP: true,
+    viewport: { width: 1280, height: 800 }
   });
 
   const cookies = JSON.parse(fs.readFileSync("cookies.json", "utf8"));
@@ -18,7 +25,7 @@ export async function publishToTikTok(videoPath, description) {
 
   await page.waitForTimeout(5000);
 
-  await page.goto("https://www.tiktok.com/creator-center/upload?lang=en", {
+  await page.goto("https://www.tiktok.com/upload?lang=en", {
     waitUntil: "networkidle",
     timeout: 90000
   });
